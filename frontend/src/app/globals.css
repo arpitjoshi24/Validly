@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-public), ui-sans-serif, system-ui, sans-serif;
+   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #12171f;
+  --color-ink-soft: #4a5565;
+  --color-line: #dfe3e9;
+  --color-surface: #ffffff;
+  --color-canvas: #f4f6f8;
+  --color-brand: #0b6b63;
+  --color-brand-dark: #08524c;
+  --color-brand-tint: #e0f2f0;
+  --color-signal: #c9780a;
+  --color-signal-tint: #fdf0dc;
+  --color-danger: #b42318;
+  --color-danger-tint: #fde8e6;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+
+:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
