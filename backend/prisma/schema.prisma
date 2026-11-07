@@ -56,7 +56,11 @@ model User {
 
   // One founder can own multiple products
   products        Product[]
-
+  votes             Vote[]
+intents           PurchaseIntent[]
+likes             Like[]
+comments          Comment[]
+waitlistEntries   WaitlistEntry[]
   @@map("users")
 }
 
@@ -131,7 +135,12 @@ model Campaign {
   variants       CampaignVariant[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
-
+  votes     Vote[]
+intents   PurchaseIntent[]
+likes     Like[]
+comments  Comment[]
+waitlist  WaitlistEntry[]
+views     CampaignView[]
   @@index([status, endsAt])
   @@index([productId])
   @@map("campaigns")
@@ -145,7 +154,104 @@ model CampaignVariant {
   description String?
   pricePaise  Int
   position    Int      @default(0)
-
+  votes    Vote[]
+intents  PurchaseIntent[]
   @@index([campaignId])
   @@map("campaign_variants")
+}
+
+enum IntentLevel {
+  DEFINITELY
+  PROBABLY
+  MAYBE
+  NO
+}
+
+enum CommentStatus {
+  VISIBLE
+  HIDDEN
+}
+
+model Vote {
+  id         String          @id @default(uuid())
+  campaignId String
+  campaign   Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variantId  String
+  variant    CampaignVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@unique([campaignId, userId])
+  @@index([variantId])
+  @@map("votes")
+}
+
+model PurchaseIntent {
+  id         String          @id @default(uuid())
+  campaignId String
+  campaign   Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variantId  String
+  variant    CampaignVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  level      IntentLevel
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@unique([userId, variantId])
+  @@index([campaignId])
+  @@map("purchase_intents")
+}
+
+model Like {
+  id         String   @id @default(uuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([campaignId, userId])
+  @@map("likes")
+}
+
+model Comment {
+  id         String        @id @default(uuid())
+  campaignId String
+  campaign   Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content    String
+  status     CommentStatus @default(VISIBLE)
+  createdAt  DateTime      @default(now())
+
+  @@index([campaignId, createdAt])
+  @@map("comments")
+}
+
+model WaitlistEntry {
+  id                  String   @id @default(uuid())
+  campaignId          String
+  campaign            Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consentToShareEmail Boolean  @default(false)
+  createdAt           DateTime @default(now())
+
+  @@unique([campaignId, userId])
+  @@map("waitlist_entries")
+}
+
+model CampaignView {
+  id         String   @id @default(uuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  viewerKey  String
+  day        String
+  createdAt  DateTime @default(now())
+
+  @@unique([campaignId, viewerKey, day])
+  @@map("campaign_views")
 }

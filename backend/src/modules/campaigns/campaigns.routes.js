@@ -4,7 +4,8 @@ import { requireRole } from '../../middleware/requireRole.js';
 import { validate } from '../../middleware/validate.js';
 import * as c from './campaigns.controller.js';
 import * as s from './campaigns.schema.js';
-
+import { founderWaitlist } from '../engagement/engagement.controller.js';
+import { founderWaitlistSchema } from '../engagement/engagement.schema.js'
 const router = Router();
 
 router.use(authenticate, requireRole('FOUNDER'));
@@ -16,5 +17,5 @@ router.patch('/:id', validate(s.updateCampaignSchema), c.update);
 router.patch('/:id/publish', validate(s.campaignIdSchema), c.publish);
 router.patch('/:id/close', validate(s.campaignIdSchema), c.close);
 router.delete('/:id', validate(s.campaignIdSchema), c.remove);
-
+router.get('/:id/waitlist', validate(founderWaitlistSchema), founderWaitlist);
 export default router;

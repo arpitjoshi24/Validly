@@ -52,3 +52,13 @@ export async function setUserStatus(adminId, userId, status) {
     select: safeUserSelect,
   });
 }
+
+export async function setCommentStatus(commentId, status) {
+  const comment = await prisma.comment.findUnique({ where: { id: commentId } });
+  if (!comment) throw new ApiError(404, 'Comment not found');
+  return prisma.comment.update({
+    where: { id: commentId },
+    data: { status },
+    select: { id: true, status: true },
+  });
+}

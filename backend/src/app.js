@@ -17,7 +17,7 @@ import discoveryRoutes from './modules/discovery/discovery.routes.js';
 import productRoutes from './modules/products/products.routes.js';
 import userRoutes from './modules/users/users.routes.js';
 import { asyncHandler } from './utils/asyncHandler.js';
-
+import engagementRoutes from './modules/engagement/engagement.routes.js';
 const app = express();
 
 app.set('trust proxy', 1);
@@ -45,7 +45,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/discover', discoveryRoutes);
-
+app.use('/api/discover', discoveryRoutes);
+app.use('/api/discover', engagementRoutes);
 app.use(notFound);
 app.use(errorHandler);
 

@@ -22,3 +22,11 @@ export const updateStatus = asyncHandler(async (req, res) => {
   );
   res.json({ success: true, data: { user } });
 });
+
+export const updateCommentVisibility = asyncHandler(async (req, res) => {
+  const comment = await setCommentStatus(
+    req.validated.params.commentId,
+    req.validated.body.status
+  );
+  res.json({ success: true, data: { comment } });
+});

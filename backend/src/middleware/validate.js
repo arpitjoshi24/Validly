@@ -4,7 +4,7 @@ import { ApiError } from '../utils/ApiError.js';
 // Validated data goes on req.validated. Unknown fields are stripped.
 export const validate = (schema) => (req, res, next) => {
   const result = schema.safeParse({
-    body: req.body,
+    body: req.body ?? {},
     query: req.query,
     params: req.params,
   });

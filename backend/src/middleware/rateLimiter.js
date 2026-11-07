@@ -17,3 +17,11 @@ export const authLimiter = rateLimit({
   legacyHeaders: false,
   message: tooMany,
 });
+export const engagementLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: 60,
+  keyGenerator: (req) => req.user?.id ?? 'anonymous',
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: tooMany,
+});

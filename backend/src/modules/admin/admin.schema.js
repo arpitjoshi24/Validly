@@ -19,3 +19,8 @@ export const userStatusSchema = z.object({
   params: z.object({ userId: z.string().uuid() }),
   body: z.object({ status: z.enum(['ACTIVE', 'SUSPENDED']) }),
 });
+
+export const commentVisibilitySchema = z.object({
+  params: z.object({ commentId: z.string().uuid() }),
+  body: z.object({ status: z.enum(['VISIBLE', 'HIDDEN']) }),
+});

@@ -12,5 +12,5 @@ router.use(authenticate, requireRole('ADMIN'));
 router.get('/users', validate(listUsersSchema), list);
 router.patch('/founders/:userId/verify', validate(verifyFounderSchema), verifyFounder);
 router.patch('/users/:userId/status', validate(userStatusSchema), updateStatus);
-
+router.patch('/comments/:commentId/visibility', validate(commentVisibilitySchema), updateCommentVisibility);
 export default router;
