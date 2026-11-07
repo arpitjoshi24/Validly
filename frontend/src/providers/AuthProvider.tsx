@@ -1,6 +1,14 @@
+
 "use client";
 
-import { createContext, useCallback, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+
 import { api } from "@/lib/api";
 import type { User } from "@/types";
 
@@ -12,6 +20,10 @@ interface AuthContextValue {
   logout: () => Promise<void>;
 }
 
+interface AuthResponse {
+  user: User;
+}
+
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -20,8 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refresh = useCallback(async () => {
     try {
-      setUser(await api.get<User>("/auth/me"));
-    } catch {
+      const response = await api.get<AuthResponse>("/auth/me");
+      setUser(response.user);
+    } catch (error) {
+      console.error("Auth refresh failed:", error);
       setUser(null);
     } finally {
       setLoading(false);
@@ -30,18 +44,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      await api.post("/auth/logout");
+      await api.post<void>("/auth/logout");
+    } catch (error) {
+      console.error("Logout failed:", error);
     } finally {
       setUser(null);
     }
   }, []);
 
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+  void refresh();
+}, [refresh]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, setUser, refresh, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, setUser, refresh, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
