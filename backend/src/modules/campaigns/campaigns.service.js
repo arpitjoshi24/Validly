@@ -120,7 +120,58 @@ export async function closeCampaign(campaignId, founderId) {
   if (result.count === 0) throw new ApiError(409, 'Only active campaigns can be closed');
   return getOwned(campaignId, founderId);
 }
+export async function getCampaignResults(campaignId, founderId) {
+  const campaign = await getOwned(campaignId, founderId);
 
+  const [voteGroups, intentGroups, likes, commentCount, comments, views, waitlist] = await Promise.all([
+    prisma.vote.groupBy({ by: ['variantId'], where: { campaignId }, _count: { _all: true } }),
+    prisma.purchaseIntent.groupBy({
+      by: ['variantId', 'level'],
+      where: { campaignId },
+      _count: { _all: true },
+    }),
+    prisma.like.count({ where: { campaignId } }),
+    prisma.comment.count({ where: { campaignId, status: 'VISIBLE' } }),
+    prisma.comment.findMany({
+      where: { campaignId, status: 'VISIBLE' },
+      select: { id: true, content: true, createdAt: true, user: { select: { name: true } } },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    }),
+    prisma.campaignView.count({ where: { campaignId } }),
+    prisma.waitlistEntry.count({ where: { campaignId } }),
+  ]);
+
+  const votesByVariant = new Map(voteGroups.map((g) => [g.variantId, g._count._all]));
+  const totalVotes = voteGroups.reduce((sum, g) => sum + g._count._all, 0);
+
+  const variants = campaign.variants.map((v) => {
+    const votes = votesByVariant.get(v.id) ?? 0;
+    const intents = { DEFINITELY: 0, PROBABLY: 0, MAYBE: 0, NO: 0 };
+    for (const g of intentGroups) {
+      if (g.variantId === v.id) intents[g.level] = g._count._all;
+    }
+    return {
+      id: v.id,
+      name: v.name,
+      price: v.pricePaise / 100,
+      votes,
+      votePercent: totalVotes ? Math.round((votes / totalVotes) * 100) : 0,
+      intents,
+    };
+  });
+
+  return {
+    totals: { votes: totalVotes, likes, comments: commentCount, views, waitlist },
+    variants,
+    comments: comments.map((c) => ({
+      id: c.id,
+      content: c.content,
+      createdAt: c.createdAt,
+      userName: c.user.name,
+    })),
+  };
+}
 export async function deleteCampaign(campaignId, founderId) {
   const campaign = await getOwned(campaignId, founderId);
   if (campaign.status !== 'DRAFT') {

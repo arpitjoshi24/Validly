@@ -1,6 +1,5 @@
 import { asyncHandler } from '../../utils/asyncHandler.js';
-import { listUsers, setFounderVerification, setUserStatus } from './admin.service.js';
-
+import { listUsers, setFounderVerification, setUserStatus, setCommentStatus } from './admin.service.js';
 export const list = asyncHandler(async (req, res) => {
   const data = await listUsers(req.validated.query);
   res.json({ success: true, data });

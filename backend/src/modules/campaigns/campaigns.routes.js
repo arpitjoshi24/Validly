@@ -18,4 +18,5 @@ router.patch('/:id/publish', validate(s.campaignIdSchema), c.publish);
 router.patch('/:id/close', validate(s.campaignIdSchema), c.close);
 router.delete('/:id', validate(s.campaignIdSchema), c.remove);
 router.get('/:id/waitlist', validate(founderWaitlistSchema), founderWaitlist);
+router.get('/:id/results', validate(s.campaignIdSchema), c.results);
 export default router;

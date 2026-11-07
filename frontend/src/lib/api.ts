@@ -1,8 +1,8 @@
 export class ApiError extends Error {
   status: number;
-  details?: Record<string, string[]>;
+  details?: unknown;
 
-  constructor(message: string, status: number, details?: Record<string, string[]>) {
+  constructor(message: string, status: number, details?: unknown) {
     super(message);
     this.status = status;
     this.details = details;
@@ -22,11 +22,10 @@ async function request<T>(path: string, { body, headers, ...rest }: Options = {}
   const json = await res.json().catch(() => null);
 
   if (!res.ok) {
-    // Adjust to whatever shape errorHandler.js returns
     throw new ApiError(json?.message ?? "Something went wrong. Try again.", res.status, json?.errors);
   }
 
-  // Works whether the backend returns { data: ... } or the raw object
+  // Backend shape is { success, data } so return just the data part
   return (json && typeof json === "object" && "data" in json ? json.data : json) as T;
 }
 
@@ -37,3 +36,11 @@ export const api = {
   patch: <T>(path: string, body?: unknown) => request<T>(path, { method: "PATCH", body }),
   delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
 };
+
+/** Backend wraps results like { user }, { profile }, { campaign }. Take the inner value if it's there. */
+export function pick<T>(data: unknown, key: string): T {
+  if (data && typeof data === "object" && key in data) {
+    return (data as Record<string, T>)[key];
+  }
+  return data as T;
+}

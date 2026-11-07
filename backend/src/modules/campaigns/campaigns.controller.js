@@ -40,3 +40,7 @@ export const remove = asyncHandler(async (req, res) => {
   await service.deleteCampaign(req.validated.params.id, req.user.id);
   res.json({ success: true, message: 'Campaign deleted' });
 });
+export const results = asyncHandler(async (req, res) => {
+  const data = await service.getCampaignResults(req.validated.params.id, req.user.id);
+  res.json({ success: true, data });
+});

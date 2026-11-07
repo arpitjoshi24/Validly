@@ -1,23 +1,39 @@
 "use client";
 
 import Link from "next/link";
+import { ChevronRight, Compass, UserCircle } from "lucide-react";
 import { RoleGuard } from "@/components/auth/RoleGuard";
-import { Card } from "@/components/ui/Card";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useAuth } from "@/hooks/useAuth";
+
+const cards = [
+  { href: "/consumer/discover", icon: Compass, title: "Discover products", body: "Browse campaigns that are live right now." },
+  { href: "/consumer/profile", icon: UserCircle, title: "Your interests", body: "Choose the categories you want to see first." },
+];
 
 export default function ConsumerHome() {
   const { user } = useAuth();
   return (
     <RoleGuard roles={["CONSUMER"]}>
-      <h1 className="text-3xl font-bold">Welcome, {user?.name.split(" ")[0]}</h1>
-      <p className="mt-2 text-ink-soft">Upcoming products will show up here once founders start publishing campaigns.</p>
-      <Card className="mt-6">
-        <h2 className="font-semibold">Pick your interests</h2>
-        <p className="mt-1 text-sm text-ink-soft">Choose the categories you want to hear about first.</p>
-        <Link href="/consumer/profile" className="mt-4 inline-block rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark">
-          Choose interests
-        </Link>
-      </Card>
+      <PageHeader title={`Welcome, ${user?.name.split(" ")[0] ?? ""}`} description="Help founders find out what's worth making." />
+      <div className="grid gap-4 sm:grid-cols-2">
+        {cards.map(({ href, icon: Icon, title, body }) => (
+          <Link
+            key={href}
+            href={href}
+            className="group flex items-start gap-4 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-ink-soft/40"
+          >
+            <span className="grid size-9 shrink-0 place-items-center rounded-md bg-brand-tint text-brand-dark">
+              <Icon className="size-[18px]" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-medium">{title}</span>
+              <span className="mt-0.5 block text-sm text-ink-soft">{body}</span>
+            </span>
+            <ChevronRight className="mt-1 size-4 text-ink-soft transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        ))}
+      </div>
     </RoleGuard>
   );
 }

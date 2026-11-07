@@ -1,12 +1,13 @@
 "use client";
 
 import { RoleGuard } from "@/components/auth/RoleGuard";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { UsersTable } from "@/features/admin/UsersTable";
 
 export default function AdminUsersPage() {
   return (
     <RoleGuard roles={["ADMIN"]}>
-      <h1 className="mb-6 text-3xl font-bold">Users</h1>
+      <PageHeader title="Users" description="Search accounts, review business profiles and suspend anyone who breaks the rules." />
       <UsersTable />
     </RoleGuard>
   );

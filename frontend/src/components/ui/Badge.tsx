@@ -9,9 +9,25 @@ const tones: Record<Tone, string> = {
   danger: "bg-danger-tint text-danger",
 };
 
-export function Badge({ tone = "neutral", children }: { tone?: Tone; children: React.ReactNode }) {
+const dots: Record<Tone, string> = {
+  neutral: "bg-ink-soft",
+  success: "bg-brand",
+  warning: "bg-signal",
+  danger: "bg-danger",
+};
+
+export function Badge({
+  tone = "neutral",
+  dot = false,
+  children,
+}: {
+  tone?: Tone;
+  dot?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium", tones[tone])}>
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium", tones[tone])}>
+      {dot && <span aria-hidden="true" className={cn("size-1.5 rounded-full", dots[tone])} />}
       {children}
     </span>
   );
