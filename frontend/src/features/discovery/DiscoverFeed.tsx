@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AlertCircle, Compass, Search, SearchX } from "lucide-react";
+import { AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Compass, Search, SearchX, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -12,7 +12,7 @@ import { discoveryApi } from "./discovery.api";
 import type { Campaign, Pagination, Sort } from "./discovery.types";
 
 const PAGE_SIZE = 12;
-const control = "h-9 rounded-md border border-line bg-surface px-3 text-sm hover:border-ink-soft/40";
+const panel = "rounded-2xl border border-line bg-surface";
 
 export function DiscoverFeed() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -89,29 +89,46 @@ export function DiscoverFeed() {
   const to = pagination ? Math.min(pagination.page * pagination.limit, pagination.total) : 0;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative w-full sm:w-80">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-soft" />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative w-full sm:w-96">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-soft" />
           <input
             type="search"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search products"
             aria-label="Search products"
-            className={cn(control, "w-full pl-9")}
+            className="h-11 w-full rounded-xl border border-line bg-surface pl-10 pr-10 text-sm outline-none transition hover:border-ink-soft/40 focus:border-brand focus:ring-4 focus:ring-brand/10 [&::-webkit-search-cancel-button]:hidden"
           />
+          {searchInput && (
+            <button
+              type="button"
+              onClick={() => setSearchInput("")}
+              aria-label="Clear search"
+              className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-md text-ink-soft hover:bg-canvas hover:text-ink"
+            >
+              <X className="size-4" />
+            </button>
+          )}
         </div>
-        <select
-          aria-label="Sort campaigns"
-          value={sort}
-          onChange={(e) => { setSort(e.target.value as Sort); setPage(1); }}
-          className={cn(control, "sm:ml-auto")}
-        >
-          <option value="recent">Newest first</option>
-          <option value="ending_soon">Ending soon</option>
-        </select>
+
+        <div className="relative sm:ml-auto">
+          <select
+            aria-label="Sort campaigns"
+            value={sort}
+            onChange={(e) => {
+              setSort(e.target.value as Sort);
+              setPage(1);
+            }}
+            className="h-11 appearance-none rounded-xl border border-line bg-surface pl-4 pr-10 text-sm outline-none transition hover:border-ink-soft/40 focus:border-brand focus:ring-4 focus:ring-brand/10"
+          >
+            <option value="recent">Newest first</option>
+            <option value="ending_soon">Ending soon</option>
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-soft" />
+        </div>
       </div>
 
       {/* Category chips */}
@@ -123,12 +140,15 @@ export function DiscoverFeed() {
               key={c || "all"}
               type="button"
               aria-pressed={selected}
-              onClick={() => { setCategory(c); setPage(1); }}
+              onClick={() => {
+                setCategory(c);
+                setPage(1);
+              }}
               className={cn(
-                "shrink-0 rounded-full border px-3.5 py-1 text-sm transition-colors",
+                "shrink-0 rounded-full border px-4 py-1.5 text-sm transition",
                 selected
-                  ? "border-brand bg-brand-tint font-medium text-brand-dark"
-                  : "border-line bg-surface text-ink-soft hover:bg-canvas"
+                  ? "border-brand bg-brand font-medium text-white shadow-[0_6px_14px_-8px] shadow-brand"
+                  : "border-line bg-surface text-ink-soft hover:border-ink-soft/40 hover:bg-canvas hover:text-ink"
               )}
             >
               {c ? categoryLabel(c) : "All"}
@@ -137,9 +157,25 @@ export function DiscoverFeed() {
         })}
       </div>
 
+      {/* Result summary */}
+      {pagination && !loadError && !firstLoad && pagination.total > 0 && (
+        <p className="flex flex-wrap items-center gap-3 text-sm text-ink-soft" aria-live="polite">
+          <span>
+            <span className="font-semibold text-ink tabular-nums">{pagination.total}</span>{" "}
+            {pagination.total === 1 ? "campaign" : "campaigns"} live
+            {filtered && " for this search"}
+          </span>
+          {filtered && (
+            <button type="button" onClick={clearFilters} className="inline-flex items-center gap-1 font-medium text-brand hover:underline">
+              <X className="size-3.5" /> Clear filters
+            </button>
+          )}
+        </p>
+      )}
+
       {/* Results */}
       {loadError ? (
-        <div className="rounded-lg border border-line bg-surface">
+        <div className={panel}>
           <EmptyState
             icon={AlertCircle}
             title="Couldn't load campaigns"
@@ -148,21 +184,21 @@ export function DiscoverFeed() {
           />
         </div>
       ) : firstLoad ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="overflow-hidden rounded-lg border border-line bg-surface">
+            <div key={i} className={cn(panel, "overflow-hidden")}>
               <Skeleton className="aspect-[4/3] w-full rounded-none" />
-              <div className="space-y-2 p-4">
-                <Skeleton className="h-3 w-20" />
-                <Skeleton className="h-4 w-40" />
-                <Skeleton className="h-3 w-28" />
-                <Skeleton className="h-3 w-full" />
+              <div className="space-y-2.5 p-5">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-3.5 w-28" />
+                <Skeleton className="h-3.5 w-full" />
+                <Skeleton className="h-3.5 w-3/4" />
               </div>
             </div>
           ))}
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="rounded-lg border border-line bg-surface">
+        <div className={panel}>
           {filtered ? (
             <EmptyState
               icon={SearchX}
@@ -179,7 +215,7 @@ export function DiscoverFeed() {
           )}
         </div>
       ) : (
-        <div className={cn("grid gap-5 transition-opacity sm:grid-cols-2 lg:grid-cols-3", fetching && "opacity-60")}>
+        <div className={cn("grid gap-6 transition-opacity sm:grid-cols-2 lg:grid-cols-3", fetching && "opacity-60")}>
           {campaigns.map((c) => (
             <CampaignCard key={c.id} campaign={c} />
           ))}
@@ -187,23 +223,28 @@ export function DiscoverFeed() {
       )}
 
       {/* Pagination */}
-      {pagination && pagination.total > 0 && !loadError && (
-        <div className="flex items-center justify-between text-sm text-ink-soft">
-          <span>
+      {pagination && pagination.total > 0 && !loadError && pagination.totalPages > 1 && (
+        <div className="flex flex-col items-center justify-between gap-3 border-t border-line pt-5 text-sm text-ink-soft sm:flex-row">
+          <span className="tabular-nums">
             Showing {from}–{to} of {pagination.total}
           </span>
-          <div className="flex gap-2">
-            <Button variant="secondary" className="h-8 px-3" disabled={page <= 1 || fetching} onClick={() => setPage((p) => p - 1)}>
-              Previous
-            </Button>
-            <Button
-              variant="secondary"
-              className="h-8 px-3"
-              disabled={page >= pagination.totalPages || fetching}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Next
-            </Button>
+          <div className="flex items-center gap-3">
+            <span className="tabular-nums">
+              Page {pagination.page} of {pagination.totalPages}
+            </span>
+            <div className="flex gap-2">
+              <Button variant="secondary" className="h-9 gap-1 px-3" disabled={page <= 1 || fetching} onClick={() => setPage((p) => p - 1)}>
+                <ChevronLeft className="size-4" /> Previous
+              </Button>
+              <Button
+                variant="secondary"
+                className="h-9 gap-1 px-3"
+                disabled={page >= pagination.totalPages || fetching}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next <ChevronRight className="size-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}

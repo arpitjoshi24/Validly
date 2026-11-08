@@ -1,10 +1,5 @@
-import { LoginForm } from "@/features/auth/LoginForm";
+import { AuthCard } from "@/features/auth/AuthCard";
 
 export default function LoginPage() {
-  return (
-    <>
-      <h1 className="mb-6 text-2xl font-bold">Log in</h1>
-      <LoginForm />
-    </>
-  );
+  return <AuthCard initialMode="login" />;
 }

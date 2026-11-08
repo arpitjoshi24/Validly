@@ -1,6 +1,9 @@
 "use client";
 
+import { BadgeCheck, Check } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { INTENT_OPTIONS, type EngagementVariant, type IntentLevel, type MyEngagement } from "./engagement.types";
 
 type Props = {
@@ -12,48 +15,83 @@ type Props = {
   onIntent: (variantId: string, level: IntentLevel) => void;
 };
 
+// Colour each answer so a glance shows how strong the intent is
+const INTENT_ON: Record<string, string> = {
+  DEFINITELY: "border-brand bg-brand text-white",
+  PROBABLY: "border-brand/40 bg-brand-tint text-brand-dark",
+  MAYBE: "border-signal/40 bg-signal-tint text-signal",
+  NO: "border-ink-soft/30 bg-canvas text-ink",
+};
+
 export function VoteSection({ variants, me, disabled, onVote, onRemoveVote, onIntent }: Props) {
   return (
-    <ul className="mt-4 space-y-3">
+    <ul className="mt-5 space-y-4">
       {variants.map((v) => {
         const voted = me.votedVariantId === v.id;
         const intent = me.intents.find((i) => i.variantId === v.id)?.level ?? "";
         const price = formatPrice(v.pricePaise);
+
         return (
-          <li key={v.id}
-            className={`rounded-md border p-4 ${voted ? "border-brand bg-brand/5" : "border-line"}`}>
-            <div className="flex items-start justify-between gap-4">
+          <li
+            key={v.id}
+            className={cn(
+              "rounded-2xl border p-5 transition",
+              voted ? "border-brand bg-brand-tint/50 ring-4 ring-brand/10" : "border-line bg-surface"
+            )}
+          >
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <p className="font-medium">{v.name}</p>
-                {v.description && <p className="mt-0.5 text-sm text-ink-soft">{v.description}</p>}
-                <p className="mt-1 text-sm font-medium tabular-nums">{price}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-display text-lg font-semibold">{v.name}</h3>
+                  {voted && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-brand px-2.5 py-0.5 text-xs font-medium text-white">
+                      <BadgeCheck className="size-3.5" /> Your vote
+                    </span>
+                  )}
+                </div>
+                {v.description && <p className="mt-1 text-sm leading-relaxed text-ink-soft">{v.description}</p>}
+                <p className="mt-2 text-xl font-semibold tabular-nums">{price}</p>
               </div>
 
               {voted ? (
-                <button type="button" disabled={disabled} onClick={onRemoveVote}
-                  className="shrink-0 rounded-md border border-brand px-3 py-1.5 text-sm font-medium text-brand hover:bg-brand/10 disabled:opacity-60">
-                  Your vote. Remove
-                </button>
+                <Button variant="secondary" className="h-10 shrink-0" disabled={disabled} onClick={onRemoveVote}>
+                  Remove vote
+                </Button>
               ) : (
-                <button type="button" disabled={disabled} onClick={() => onVote(v.id)}
-                  className="shrink-0 rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-60">
-                  {me.votedVariantId ? "Switch vote to this" : "Vote for this"}
-                </button>
+                <Button className="h-10 shrink-0" disabled={disabled} onClick={() => onVote(v.id)}>
+                  <Check className="size-4" />
+                  {me.votedVariantId ? "Switch vote here" : "Vote for this"}
+                </Button>
               )}
             </div>
 
-            <div className="mt-3">
-              <label htmlFor={`intent-${v.id}`} className="block text-xs text-ink-soft">
+            <div className="mt-5 border-t border-line pt-4">
+              <p id={`intent-${v.id}`} className="text-sm font-medium">
                 Would you buy this at {price}?
-              </label>
-              <select id={`intent-${v.id}`} value={intent} disabled={disabled}
-                onChange={(e) => onIntent(v.id, e.target.value as IntentLevel)}
-                className="mt-1 w-full rounded-md border border-line bg-surface px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-60 sm:w-64">
-                <option value="" disabled>Select an answer</option>
-                {INTENT_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
-              </select>
+              </p>
+              <div role="radiogroup" aria-labelledby={`intent-${v.id}`} className="mt-2.5 flex flex-wrap gap-2">
+                {INTENT_OPTIONS.map((o) => {
+                  const on = intent === o.value;
+                  return (
+                    <button
+                      key={o.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      disabled={disabled}
+                      onClick={() => onIntent(v.id, o.value as IntentLevel)}
+                      className={cn(
+                        "rounded-full border px-4 py-1.5 text-sm font-medium transition disabled:opacity-60",
+                        on
+                          ? (INTENT_ON[o.value] ?? "border-brand bg-brand-tint text-brand-dark")
+                          : "border-line bg-surface text-ink-soft hover:border-ink-soft/40 hover:bg-canvas hover:text-ink"
+                      )}
+                    >
+                      {o.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </li>
         );

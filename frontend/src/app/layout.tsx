@@ -4,8 +4,8 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/providers/AuthProvider";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-display" });
-const body = Public_Sans({ subsets: ["latin"], variable: "--font-body" });
+const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-bricolage" });
+const body = Public_Sans({ subsets: ["latin"], variable: "--font-public" });
 
 export const metadata: Metadata = {
   title: "Validly: validate before you manufacture",

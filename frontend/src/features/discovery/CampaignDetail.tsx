@@ -1,8 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ComponentType } from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowLeft, BadgeCheck, Compass, ImageOff } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  BadgeCheck,
+  Clock,
+  Compass,
+  Heart,
+  ImageOff,
+  Lightbulb,
+  MapPin,
+  Target,
+} from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -15,7 +26,11 @@ import type { Campaign } from "./discovery.types";
 
 type State = "loading" | "ready" | "notfound" | "error";
 
-const backLink = "mb-5 inline-flex items-center gap-1 text-sm text-ink-soft hover:text-ink";
+const backLink =
+  "mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft transition-colors hover:text-ink";
+const panel = "rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(18,23,31,0.04)]";
+
+type Fact = { label: string; value: string | null; icon: ComponentType<{ className?: string }>; wide?: boolean };
 
 export function CampaignDetail({ campaignId }: { campaignId: string }) {
   const [campaign, setCampaign] = useState<Campaign | null>(null);
@@ -45,13 +60,20 @@ export function CampaignDetail({ campaignId }: { campaignId: string }) {
 
   if (state === "loading") {
     return (
-      <div className="grid gap-8 lg:grid-cols-2">
-        <Skeleton className="aspect-[4/3] w-full" />
-        <div className="space-y-3">
-          <Skeleton className="h-3 w-24" />
-          <Skeleton className="h-7 w-64" />
-          <Skeleton className="h-4 w-40" />
-          <Skeleton className="h-20 w-full" />
+      <div>
+        <Skeleton className="mb-6 h-4 w-32" />
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+          <Skeleton className="aspect-[4/3] w-full rounded-2xl" />
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-9 w-72" />
+            <Skeleton className="h-4 w-44" />
+            <Skeleton className="h-24 w-full" />
+            <div className="grid grid-cols-2 gap-3">
+              <Skeleton className="h-16 rounded-xl" />
+              <Skeleton className="h-16 rounded-xl" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -59,30 +81,43 @@ export function CampaignDetail({ campaignId }: { campaignId: string }) {
 
   if (state === "notfound") {
     return (
-      <div className="rounded-lg border border-line bg-surface">
-        <EmptyState
-          icon={Compass}
-          title="This campaign isn't available"
-          description="It may have ended, or the link is wrong."
-          action={
-            <Link href="/consumer/discover" className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark">
-              Browse live campaigns
-            </Link>
-          }
-        />
+      <div>
+        <Link href="/consumer/discover" className={backLink}>
+          <ArrowLeft className="size-4" /> All campaigns
+        </Link>
+        <div className={panel}>
+          <EmptyState
+            icon={Compass}
+            title="This campaign isn't available"
+            description="It may have ended, or the link is wrong."
+            action={
+              <Link
+                href="/consumer/discover"
+                className="inline-flex h-10 items-center rounded-lg bg-brand px-4 text-sm font-medium text-white hover:bg-brand-dark"
+              >
+                Browse live campaigns
+              </Link>
+            }
+          />
+        </div>
       </div>
     );
   }
 
   if (state === "error" || !campaign) {
     return (
-      <div className="rounded-lg border border-line bg-surface">
-        <EmptyState
-          icon={AlertCircle}
-          title="Couldn't load this campaign"
-          description={errorText}
-          action={<Button variant="secondary" onClick={load}>Try again</Button>}
-        />
+      <div>
+        <Link href="/consumer/discover" className={backLink}>
+          <ArrowLeft className="size-4" /> All campaigns
+        </Link>
+        <div className={panel}>
+          <EmptyState
+            icon={AlertCircle}
+            title="Couldn't load this campaign"
+            description={errorText}
+            action={<Button variant="secondary" onClick={load}>Try again</Button>}
+          />
+        </div>
       </div>
     );
   }
@@ -91,11 +126,11 @@ export function CampaignDetail({ campaignId }: { campaignId: string }) {
   const images = product.images;
   const main = images[selected]?.url;
 
-  const details: [string, string | null][] = [
-    ["Closes", `${formatDate(campaign.endsAt)} (${timeLeft(campaign.endsAt)})`],
-    ["Location", campaign.location],
-    ["Target audience", campaign.targetAudience],
-    ["What the founder wants to learn", campaign.objective],
+  const facts: Fact[] = [
+    { label: "Closes", value: `${formatDate(campaign.endsAt)}`, icon: Clock },
+    { label: "Location", value: campaign.location, icon: MapPin },
+    { label: "Target audience", value: campaign.targetAudience, icon: Target },
+    { label: "What the founder wants to learn", value: campaign.objective, icon: Lightbulb, wide: true },
   ];
 
   return (
@@ -104,10 +139,10 @@ export function CampaignDetail({ campaignId }: { campaignId: string }) {
         <ArrowLeft className="size-4" /> All campaigns
       </Link>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
         {/* Gallery */}
         <div className="space-y-3">
-          <div className="aspect-[4/3] overflow-hidden rounded-lg border border-line bg-canvas">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_1px_2px_rgba(18,23,31,0.04)]">
             {main ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={main} alt={product.name} className="size-full object-cover" />
@@ -116,9 +151,13 @@ export function CampaignDetail({ campaignId }: { campaignId: string }) {
                 <ImageOff className="size-8" aria-label="No image" />
               </div>
             )}
+            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-ink/75 px-3.5 py-1.5 text-sm font-medium text-white backdrop-blur">
+              <Clock className="size-4" /> {timeLeft(campaign.endsAt)}
+            </span>
           </div>
+
           {images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto">
+            <div className="flex gap-2.5 overflow-x-auto pb-1">
               {images.map((img, i) => (
                 <button
                   key={img.id}
@@ -127,8 +166,8 @@ export function CampaignDetail({ campaignId }: { campaignId: string }) {
                   aria-label={`Show image ${i + 1}`}
                   aria-pressed={i === selected}
                   className={cn(
-                    "size-16 shrink-0 overflow-hidden rounded-md border bg-canvas",
-                    i === selected ? "border-brand ring-1 ring-brand" : "border-line hover:border-ink-soft/40"
+                    "size-[72px] shrink-0 overflow-hidden rounded-xl border-2 bg-canvas transition",
+                    i === selected ? "border-brand" : "border-transparent opacity-70 hover:opacity-100"
                   )}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -141,43 +180,67 @@ export function CampaignDetail({ campaignId }: { campaignId: string }) {
 
         {/* Info */}
         <div>
-          <span className="text-sm text-ink-soft">{categoryLabel(product.category)}</span>
-          <h1 className="mt-1 text-2xl font-semibold">{product.name}</h1>
+          <span className="inline-flex rounded-full bg-brand-tint px-3 py-1 text-xs font-medium text-brand-dark">
+            {categoryLabel(product.category)}
+          </span>
+          <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">{product.name}</h1>
 
           {business && (
-            <p className="mt-2 flex items-center gap-1.5 text-sm text-ink-soft">
-              By {business.name}
+            <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
+              By <span className="font-medium text-ink">{business.name}</span>
               {business.verified && (
-                <span className="inline-flex items-center gap-1 text-brand">
-                  <BadgeCheck className="size-4" /> Verified
+                <span className="inline-flex items-center gap-1 rounded-full bg-brand-tint px-2.5 py-0.5 text-xs font-medium text-brand-dark">
+                  <BadgeCheck className="size-3.5" /> Verified
                 </span>
               )}
             </p>
           )}
 
-          <p className="mt-5 whitespace-pre-line text-sm leading-relaxed">{product.description}</p>
+          <p className="mt-5 whitespace-pre-line leading-relaxed text-ink-soft">{product.description}</p>
 
-          <dl className="mt-6 divide-y divide-line rounded-lg border border-line bg-surface text-sm">
-            {details
-              .filter(([, value]) => value)
-              .map(([label, value]) => (
-                <div key={label} className="flex justify-between gap-4 px-4 py-2.5">
-                  <dt className="text-ink-soft">{label}</dt>
-                  <dd className="text-right">{value}</dd>
+          <dl className="mt-7 grid gap-3 sm:grid-cols-2">
+            {facts
+              .filter((f) => f.value)
+              .map(({ label, value, icon: Icon, wide }) => (
+                <div
+                  key={label}
+                  className={cn("flex gap-3 rounded-xl border border-line bg-surface p-4", wide && "sm:col-span-2")}
+                >
+                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-canvas text-ink-soft">
+                    <Icon className="size-[18px]" />
+                  </span>
+                  <div className="min-w-0">
+                    <dt className="text-xs text-ink-soft">{label}</dt>
+                    <dd className="mt-0.5 text-sm font-medium leading-snug">{value}</dd>
+                  </div>
                 </div>
               ))}
           </dl>
         </div>
       </div>
 
-      {/* Voting, likes, waitlist and comments sit below the two columns, full width */}
-      <div className="mt-10 max-w-3xl">
+      {/* Voting, likes, waitlist and comments */}
+      <section aria-labelledby="feedback-heading" className="mt-14">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 id="feedback-heading" className="text-xl font-semibold">
+              Share your feedback
+            </h2>
+            <p className="mt-1 text-sm text-ink-soft">
+              Vote for an option, tell the founder how likely you are to buy, and join the waitlist.
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-tint px-3 py-1 text-xs font-medium text-brand-dark">
+            <Heart className="size-3.5" /> Always free
+          </span>
+        </div>
+
         {variants.length === 0 ? (
-          <p className="text-sm text-ink-soft">The founder hasn't added options yet.</p>
+          <p className={cn(panel, "p-6 text-sm text-ink-soft")}>The founder hasn&apos;t added options yet.</p>
         ) : (
           <EngagementPanel campaignId={campaign.id} variants={variants} />
         )}
-      </div>
+      </section>
     </div>
   );
 }
