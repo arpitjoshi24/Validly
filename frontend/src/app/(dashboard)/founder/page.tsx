@@ -1,5 +1,5 @@
 "use client";
-
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { RoleGuard } from "@/components/auth/RoleGuard";
@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 /* ------------------------------------------------------------------ */
 
 const primaryLink =
-  "inline-flex h-10 items-center justify-center gap-2 rounded-md bg-brand px-4 text-sm font-medium text-white transition-colors hover:bg-brand-dark";
+  "inline-flex h-10 items-center justify-center gap-2 rounded-md bg-brand px-4 text-sm font-medium text-black transition-colors hover:bg-brand-dark";
 const secondaryLink =
   "inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-canvas";
 const panel = "rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(18,23,31,0.04)]";
@@ -166,7 +166,7 @@ export default function FounderHome() {
             <Link href="/founder/products/new" className={secondaryLink}>
               New product
             </Link>
-            <Link href="/founder/campaigns/new" className={primaryLink}>
+            <Link href="/founder/campaigns/new" className={primaryLink} >
               New campaign
             </Link>
           </div>

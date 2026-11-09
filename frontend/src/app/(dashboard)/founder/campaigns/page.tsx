@@ -15,6 +15,15 @@ const TABS: { label: string; value?: CampaignStatus }[] = [
   { label: "Closed", value: "CLOSED" },
 ];
 
+const tabBase =
+  "rounded-md border px-4 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20";
+const tabActive = "border-brand bg-brand text-black";
+const tabIdle =
+  "border-line bg-surface text-ink-soft hover:border-brand/60 hover:bg-brand-tint hover:text-ink";
+
+const pageBtn =
+  "rounded-md border border-line bg-surface px-3 py-1.5 text-ink transition-colors hover:border-brand/60 hover:bg-brand-tint disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:hover:bg-surface";
+
 export default function CampaignsPage() {
   const [status, setStatus] = useState<CampaignStatus | undefined>();
   const [page, setPage] = useState(1);
@@ -45,30 +54,47 @@ export default function CampaignsPage() {
     <RoleGuard roles={["FOUNDER"]}>
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Campaigns</h1>
-        <Link href="/founder/campaigns/new" className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark">
+        <Link
+          href="/founder/campaigns/new"
+          className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-brand-dark"
+        >
           New campaign
         </Link>
       </div>
 
       <div className="mt-6 flex gap-2" role="tablist">
-        {TABS.map((t) => (
-          <button key={t.label} role="tab" aria-selected={status === t.value}
-            onClick={() => { setStatus(t.value); setPage(1); }}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-              status === t.value ? "bg-brand text-white" : "border border-gray-300 hover:bg-gray-50"
-            }`}>
-            {t.label}
-          </button>
-        ))}
+        {TABS.map((t) => {
+          const selected = status === t.value;
+          return (
+            <button
+              key={t.label}
+              role="tab"
+              aria-selected={selected}
+              onClick={() => {
+                setStatus(t.value);
+                setPage(1);
+              }}
+              className={`${tabBase} ${selected ? tabActive : tabIdle}`}
+            >
+              {t.label}
+            </button>
+          );
+        })}
       </div>
 
-      {error && <p role="alert" className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <p role="alert" className="mt-4 text-sm text-danger">
+          {error}
+        </p>
+      )}
       {loading && <p className="mt-6 text-sm text-ink-soft">Loading campaigns...</p>}
 
       {!loading && !error && items.length === 0 && (
         <Card className="mt-6">
           <h2 className="font-semibold">No campaigns here yet</h2>
-          <p className="mt-1 text-sm text-ink-soft">Create a campaign to find out which variant of your product people want.</p>
+          <p className="mt-1 text-sm text-ink-soft">
+            Create a campaign to find out which variant of your product people want.
+          </p>
         </Card>
       )}
 
@@ -84,8 +110,10 @@ export default function CampaignsPage() {
                 <StatusBadge status={c.status} />
               </div>
               <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-ink-soft">
-                <span>{c.variants.length} variant{c.variants.length === 1 ? "" : "s"}
-                  {c.variants.length > 0 && ` from ${inr(Math.min(...c.variants.map((v) => v.price)))}`}</span>
+                <span>
+                  {c.variants.length} variant{c.variants.length === 1 ? "" : "s"}
+                  {c.variants.length > 0 && ` from ${inr(Math.min(...c.variants.map((v) => v.price)))}`}
+                </span>
                 <span>{c.durationDays} days</span>
                 {c.status === "ACTIVE" && <span>{timeLeft(c.endsAt)}</span>}
                 {c.status === "CLOSED" && <span>Closed {fmtDate(c.closedAt)}</span>}
@@ -98,11 +126,19 @@ export default function CampaignsPage() {
 
       {pagination && pagination.totalPages > 1 && (
         <div className="mt-6 flex items-center justify-between text-sm">
-          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 hover:bg-gray-50 disabled:opacity-50">Previous</button>
-          <span className="text-ink-soft">Page {pagination.page} of {pagination.totalPages}</span>
-          <button disabled={page >= pagination.totalPages} onClick={() => setPage((p) => p + 1)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 hover:bg-gray-50 disabled:opacity-50">Next</button>
+          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className={pageBtn}>
+            Previous
+          </button>
+          <span className="text-ink-soft">
+            Page {pagination.page} of {pagination.totalPages}
+          </span>
+          <button
+            disabled={page >= pagination.totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className={pageBtn}
+          >
+            Next
+          </button>
         </div>
       )}
     </RoleGuard>

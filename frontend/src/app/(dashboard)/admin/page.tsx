@@ -19,7 +19,7 @@ type Overview = {
   queue: AdminUser[]; // pending businesses, longest wait first
 };
 
-const panel = "rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(18,23,31,0.04)]";
+const panel = "rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.3)]";
 
 function waiting(iso?: string) {
   if (!iso) return "Waiting for review";
@@ -53,10 +53,10 @@ function Stat({
     <Link
       href={href}
       className={cn(
-        "group flex items-center gap-4 rounded-2xl border p-5 transition",
+        "group flex items-center gap-4 rounded-2xl border p-5 transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20",
         highlight
           ? "border-signal/30 bg-signal-tint hover:border-signal/60"
-          : "border-line bg-surface hover:border-ink-soft/40"
+          : "border-line bg-surface hover:border-brand/50"
       )}
     >
       <span className={cn("grid size-11 shrink-0 place-items-center rounded-xl", tone)}>
@@ -121,21 +121,28 @@ function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-linear-to-br from-brand to-brand-dark p-6 text-white shadow-[0_20px_40px_-24px] shadow-brand sm:p-8">
-        <div aria-hidden className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-        <div aria-hidden className="absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-black/20 blur-3xl" />
+      <section className="relative overflow-hidden rounded-3xl border border-line bg-linear-to-br from-line via-surface to-canvas p-6 text-ink shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)] sm:p-8">
+        <div aria-hidden className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-brand/25 blur-3xl" />
+        <div aria-hidden className="absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-black/40 blur-3xl" />
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.07]"
+          className="absolute inset-0 opacity-[0.08]"
           style={{
-            backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)",
+            backgroundImage: "radial-gradient(circle at 1px 1px, var(--color-brand) 1px, transparent 0)",
             backgroundSize: "24px 24px",
           }}
         />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold sm:text-3xl">Welcome back{firstName ? `, ${firstName}` : ""}</h1>
-            <p className="mt-1.5 max-w-md text-white/80">
+            <h1 className="text-2xl font-semibold text-ink sm:text-3xl">
+              Welcome back
+              {firstName && (
+                <>
+                  , <span className="text-brand">{firstName}</span>
+                </>
+              )}
+            </h1>
+            <p className="mt-1.5 max-w-md text-ink/70">
               {loading
                 ? "Checking the review queue..."
                 : pending > 0
@@ -145,7 +152,7 @@ function Dashboard() {
           </div>
           <Link
             href="/admin/verification"
-            className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-white px-5 text-sm font-semibold text-brand-dark transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/30"
+            className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-brand px-5 text-sm font-semibold text-black! shadow-[0_10px_24px_-10px] shadow-brand/60 transition hover:bg-brand hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/30"
           >
             {pending > 0 ? "Review now" : "Open verification"} <ChevronRight className="size-4" />
           </Link>
@@ -238,7 +245,7 @@ function Dashboard() {
                   <li key={f.id}>
                     <Link
                       href="/admin/verification"
-                      className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-canvas/60"
+                      className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-brand-tint"
                     >
                       <Avatar name={f.founderProfile!.businessName} size="sm" />
                       <span className="min-w-0 flex-1">
@@ -266,7 +273,7 @@ function Dashboard() {
         <div className="grid gap-4 sm:grid-cols-2">
           <Link
             href="/admin/verification"
-            className={cn(panel, "group flex items-start gap-4 p-5 transition hover:border-ink-soft/40")}
+            className={cn(panel, "group flex items-start gap-4 p-5 transition hover:border-brand/50")}
           >
             <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-tint text-brand">
               <ShieldCheck className="size-5" />
@@ -289,7 +296,7 @@ function Dashboard() {
 
           <Link
             href="/admin/users"
-            className={cn(panel, "group flex items-start gap-4 p-5 transition hover:border-ink-soft/40")}
+            className={cn(panel, "group flex items-start gap-4 p-5 transition hover:border-brand/50")}
           >
             <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-canvas text-ink-soft">
               <Users className="size-5" />

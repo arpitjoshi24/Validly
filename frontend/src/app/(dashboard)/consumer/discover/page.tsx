@@ -25,14 +25,14 @@ export default function DiscoverPage() {
           </div>
           <Link
             href="/consumer/profile"
-            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg border border-line bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-canvas"
+            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg border border-line bg-surface px-4 text-sm font-medium text-ink transition-colors hover:border-brand/60 hover:bg-brand-tint focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20"
           >
-            <SlidersHorizontal className="size-4" /> Tune your interests
+            <SlidersHorizontal className="size-4 text-brand" /> Tune your interests
           </Link>
         </header>
 
-        <p className="flex items-center gap-2.5 rounded-xl bg-brand-tint px-4 py-3 text-sm text-brand-dark">
-          <Heart className="size-4 shrink-0" />
+        <p className="flex items-center gap-2.5 rounded-xl border border-brand/20 bg-brand-tint px-4 py-3 text-sm text-ink/80">
+          <Heart className="size-4 shrink-0 text-brand" />
           Giving feedback is always free. Votes, comments and waitlist signups help founders decide what to build.
         </p>
 

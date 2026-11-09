@@ -38,25 +38,28 @@ export default function ConsumerHome() {
     <RoleGuard roles={["CONSUMER"]}>
       <div className="space-y-8">
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl bg-linear-to-br from-brand to-brand-dark p-6 text-white shadow-[0_20px_40px_-24px] shadow-brand sm:p-8">
-          <div aria-hidden className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-          <div aria-hidden className="absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-black/20 blur-3xl" />
+        <section className="relative overflow-hidden rounded-3xl border border-line bg-linear-to-br from-line via-surface to-canvas p-6 text-ink shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)] sm:p-8">
+          <div aria-hidden className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-brand/25 blur-3xl" />
+          <div aria-hidden className="absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-black/40 blur-3xl" />
           <div
             aria-hidden
-            className="absolute inset-0 opacity-[0.07]"
+            className="absolute inset-0 opacity-[0.08]"
             style={{
-              backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)",
+              backgroundImage: "radial-gradient(circle at 1px 1px, var(--color-brand) 1px, transparent 0)",
               backgroundSize: "24px 24px",
             }}
           />
           <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold sm:text-3xl">Welcome{firstName ? `, ${firstName}` : ""}</h1>
-              <p className="mt-1.5 max-w-md text-white/80">Help founders find out what&apos;s worth making.</p>
+              <h1 className="text-2xl font-semibold text-ink sm:text-3xl">
+                Welcome{firstName ? `, ` : ""}
+                {firstName && <span className="text-brand">{firstName}</span>}
+              </h1>
+              <p className="mt-1.5 max-w-md text-ink/70">Help founders find out what&apos;s worth making.</p>
             </div>
             <Link
               href="/consumer/discover"
-              className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-white px-5 text-sm font-semibold text-brand-dark transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/30"
+              className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-brand px-5 text-sm font-semibold text-black! shadow-[0_10px_24px_-10px] shadow-brand/60 transition hover:bg-brand hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/30"
             >
               Discover products <ChevronRight className="size-4" />
             </Link>
@@ -69,7 +72,7 @@ export default function ConsumerHome() {
             <Link
               key={href}
               href={href}
-              className="group flex flex-col rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(18,23,31,0.04)] transition hover:border-ink-soft/40 hover:shadow-[0_12px_30px_-18px_rgba(18,23,31,0.3)]"
+              className="group flex flex-col rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(0,0,0,0.3)] transition hover:border-brand/50 hover:shadow-[0_12px_30px_-18px_rgba(0,0,0,0.8)]"
             >
               <span className={`grid size-12 place-items-center rounded-xl ${tone}`}>
                 <Icon className="size-6" />
@@ -87,13 +90,13 @@ export default function ConsumerHome() {
         {/* How it works */}
         <section
           aria-labelledby="how-heading"
-          className="rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(18,23,31,0.04)]"
+          className="rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(0,0,0,0.3)]"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="how-heading" className="text-base font-semibold">
               How your feedback helps
             </h2>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-tint px-3 py-1 text-xs font-medium text-brand-dark">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-tint px-3 py-1 text-xs font-medium text-brand">
               <Heart className="size-3.5" /> Always free for you
             </span>
           </div>

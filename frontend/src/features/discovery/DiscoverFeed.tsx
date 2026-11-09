@@ -14,6 +14,11 @@ import type { Campaign, Pagination, Sort } from "./discovery.types";
 const PAGE_SIZE = 12;
 const panel = "rounded-2xl border border-line bg-surface";
 
+const chipBase =
+  "shrink-0 rounded-full border px-4 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20";
+const chipActive = "border-brand bg-brand font-medium text-black shadow-[0_6px_14px_-8px] shadow-brand/60";
+const chipIdle = "border-line bg-surface text-ink-soft hover:border-brand/60 hover:bg-brand-tint hover:text-ink";
+
 export function DiscoverFeed() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -100,14 +105,14 @@ export function DiscoverFeed() {
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search products"
             aria-label="Search products"
-            className="h-11 w-full rounded-xl border border-line bg-surface pl-10 pr-10 text-sm outline-none transition hover:border-ink-soft/40 focus:border-brand focus:ring-4 focus:ring-brand/10 [&::-webkit-search-cancel-button]:hidden"
+            className="h-11 w-full rounded-xl border border-line bg-surface pl-10 pr-10 text-sm text-ink outline-none transition placeholder:text-ink-soft hover:border-brand/40 focus:border-brand focus:ring-4 focus:ring-brand/15 [&::-webkit-search-cancel-button]:hidden"
           />
           {searchInput && (
             <button
               type="button"
               onClick={() => setSearchInput("")}
               aria-label="Clear search"
-              className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-md text-ink-soft hover:bg-canvas hover:text-ink"
+              className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-md text-ink-soft transition-colors hover:bg-brand-tint hover:text-ink"
             >
               <X className="size-4" />
             </button>
@@ -122,7 +127,7 @@ export function DiscoverFeed() {
               setSort(e.target.value as Sort);
               setPage(1);
             }}
-            className="h-11 appearance-none rounded-xl border border-line bg-surface pl-4 pr-10 text-sm outline-none transition hover:border-ink-soft/40 focus:border-brand focus:ring-4 focus:ring-brand/10"
+            className="h-11 appearance-none rounded-xl border border-line bg-surface pl-4 pr-10 text-sm text-ink outline-none transition hover:border-brand/40 focus:border-brand focus:ring-4 focus:ring-brand/15 [&>option]:bg-surface [&>option]:text-ink"
           >
             <option value="recent">Newest first</option>
             <option value="ending_soon">Ending soon</option>
@@ -144,12 +149,7 @@ export function DiscoverFeed() {
                 setCategory(c);
                 setPage(1);
               }}
-              className={cn(
-                "shrink-0 rounded-full border px-4 py-1.5 text-sm transition",
-                selected
-                  ? "border-brand bg-brand font-medium text-white shadow-[0_6px_14px_-8px] shadow-brand"
-                  : "border-line bg-surface text-ink-soft hover:border-ink-soft/40 hover:bg-canvas hover:text-ink"
-              )}
+              className={cn(chipBase, selected ? chipActive : chipIdle)}
             >
               {c ? categoryLabel(c) : "All"}
             </button>

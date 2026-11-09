@@ -72,7 +72,7 @@ export function FounderProfileForm() {
           />
           {errors.description && <p className="text-xs text-danger">{errors.description.message}</p>}
         </div>
-        <Button type="submit" loading={isSubmitting}>Save profile</Button>
+        <Button type="submit" loading={isSubmitting} className="text-black">Save profile</Button>
       </form>
     </Card>
   );

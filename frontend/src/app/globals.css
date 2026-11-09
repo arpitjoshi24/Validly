@@ -1,23 +1,27 @@
 @import "tailwindcss";
 
 @theme {
+  /* Fonts */
   --font-sans: var(--font-public), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
 
-  --font-sans: var(--font-public), ui-sans-serif, system-ui, sans-serif;
-   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
-  --color-ink: #12171f;
-  --color-ink-soft: #4a5565;
-  --color-line: #dfe3e9;
-  --color-surface: #ffffff;
-  --color-canvas: #f4f6f8;
-  --color-brand: #0b6b63;
-  --color-brand-dark: #08524c;
-  --color-brand-tint: #e0f2f0;
-  --color-signal: #c9780a;
-  --color-signal-tint: #fdf0dc;
-  --color-danger: #b42318;
-  --color-danger-tint: #fde8e6;
+  /* Palette */
+  --color-canvas: #11120d;       /* Smoky Black */
+  --color-surface: #1a1b15;      /* derived: lifted smoky black */
+  --color-line: #565449;         /* Olive Drab */
+  --color-brand: #d8cfbc;        /* Bone */
+  --color-brand-dark: #b3a98f;   /* derived: deeper bone */
+  --color-brand-tint: #22231b;   /* derived: soft olive glow */
+
+  /* Text */
+  --color-ink: #fffbf4;          /* Floral White */
+  --color-ink-soft: #a39e8d;     /* derived: muted olive-grey */
+
+  /* Status */
+  --color-signal: #d9a441;
+  --color-signal-tint: #2c2412;
+  --color-danger: #f28b82;
+  --color-danger-tint: #301c1a;
 }
 
 body {
@@ -26,10 +30,19 @@ body {
   font-family: var(--font-sans);
 }
 
-h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
 
-:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -27,6 +27,10 @@ const ROLES = [
   { value: "CONSUMER", title: "I want to vote", body: "Shape new products. Always free." },
 ] as const;
 
+/* Primary button look: bone accent with dark text, brightens on hover */
+const PRIMARY_BTN =
+  "h-12 w-full rounded-xl bg-brand text-[15px] font-semibold text-canvas shadow-[0_10px_24px_-10px] shadow-brand/60 transition hover:bg-brand hover:brightness-110 active:scale-[0.99]";
+
 /* ------------------------------------------------------------------ */
 /* Icons                                                               */
 /* ------------------------------------------------------------------ */
@@ -117,7 +121,7 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
           aria-invalid={!!error}
           aria-describedby={error || hint ? msgId : undefined}
           className={cn(
-            "peer h-14 w-full rounded-xl border bg-surface pb-1 pl-11 pr-12 pt-5 text-[15px] outline-none transition",
+            "peer h-14 w-full rounded-xl border bg-canvas pb-1 pl-11 pr-12 pt-5 text-[15px] text-ink outline-none transition",
             "placeholder-transparent focus:ring-4 focus:ring-brand/15",
             error ? "border-danger focus:border-danger" : "border-line hover:border-ink-soft/40 focus:border-brand",
             className
@@ -164,7 +168,7 @@ const PasswordField = forwardRef<HTMLInputElement, Omit<FieldProps, "icon" | "tr
             onClick={() => setShow((v) => !v)}
             aria-label={show ? "Hide password" : "Show password"}
             aria-pressed={show}
-            className="grid h-10 w-10 place-items-center rounded-lg text-ink-soft transition hover:bg-canvas hover:text-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/15"
+            className="grid h-10 w-10 place-items-center rounded-lg text-ink-soft transition hover:bg-surface hover:text-brand focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/15"
           >
             <EyeIcon off={show} />
           </button>
@@ -187,8 +191,8 @@ const STRENGTH = [
   { label: "Keep going", bar: "bg-line" },
   { label: "Weak", bar: "bg-danger" },
   { label: "Okay", bar: "bg-signal" },
-  { label: "Good", bar: "bg-brand" },
-  { label: "Strong", bar: "bg-brand-dark" },
+  { label: "Good", bar: "bg-brand/70" },
+  { label: "Strong", bar: "bg-brand" },
 ];
 
 function StrengthMeter({ password }: { password: string }) {
@@ -220,11 +224,11 @@ function RolePicker({
   const index = ROLES.findIndex((r) => r.value === role);
   return (
     <fieldset>
-      <legend className="mb-2 text-sm font-medium">How will you use Validly?</legend>
+      <legend className="mb-2 text-sm font-medium text-ink">How will you use Validly?</legend>
       <div className="relative grid grid-cols-2 rounded-2xl border border-line bg-canvas p-1">
         <span
           aria-hidden
-          className="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-xl border border-brand/30 bg-surface shadow-[0_6px_20px_-8px_rgba(0,0,0,0.25)] transition-transform duration-300 ease-[cubic-bezier(.4,1.3,.5,1)]"
+          className="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-xl border border-brand/40 bg-surface shadow-[0_6px_20px_-8px_rgba(0,0,0,0.6)] transition-transform duration-300 ease-[cubic-bezier(.4,1.3,.5,1)]"
           style={{ transform: `translateX(${index * 100}%)` }}
         />
         {ROLES.map((r) => {
@@ -242,7 +246,7 @@ function RolePicker({
                 <span
                   className={cn(
                     "grid h-5 w-5 shrink-0 place-items-center rounded-full border transition-all duration-200",
-                    active ? "scale-100 border-brand bg-brand text-white" : "scale-90 border-line text-transparent"
+                    active ? "scale-100 border-brand bg-brand text-canvas" : "scale-90 border-line text-transparent"
                   )}
                 >
                   <CheckIcon />
@@ -315,11 +319,7 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
         </div>
       </div>
 
-      <Button
-        type="submit"
-        loading={isSubmitting}
-        className="h-12 w-full rounded-xl text-[15px] font-semibold shadow-[0_10px_24px_-10px] shadow-brand transition active:scale-[0.99]"
-      >
+      <Button type="submit" loading={isSubmitting} className={PRIMARY_BTN}>
         {role === "FOUNDER" ? "Create account and start validating" : "Create account and start voting"}
       </Button>
 
@@ -334,7 +334,7 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Login form (your original logic, new look)                          */
+/* Login form                                                          */
 /* ------------------------------------------------------------------ */
 
 function LoginForm({ onSwitch }: { onSwitch: () => void }) {
@@ -402,12 +402,7 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
         </div>
       )}
 
-      <Button
-        type="submit"
-        loading={isSubmitting}
-        disabled={isSubmitting}
-        className="h-12 w-full rounded-xl text-[15px] font-semibold shadow-[0_10px_24px_-10px] shadow-brand transition active:scale-[0.99]"
-      >
+      <Button type="submit" loading={isSubmitting} disabled={isSubmitting} className={PRIMARY_BTN}>
         {isSubmitting ? "Signing in..." : "Log in"}
       </Button>
 
@@ -436,12 +431,12 @@ function AboutBlock() {
     <ul className="space-y-4">
       {BASICS.map((b) => (
         <li key={b.title} className="flex gap-3">
-          <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/15">
+          <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand/20 text-brand">
             <CheckIcon />
           </span>
           <div>
-            <p className="text-sm font-semibold">{b.title}</p>
-            <p className="mt-0.5 text-sm leading-snug text-white/75">{b.body}</p>
+            <p className="text-sm font-semibold text-ink">{b.title}</p>
+            <p className="mt-0.5 text-sm leading-snug text-ink/70">{b.body}</p>
           </div>
         </li>
       ))}
@@ -470,13 +465,13 @@ function Message({
         visible ? "visible translate-y-0 opacity-100 delay-300" : "invisible translate-y-3 opacity-0"
       )}
     >
-      <h2 className="text-3xl font-semibold leading-[1.1] tracking-tight">{title}</h2>
-      <p className="mt-2.5 max-w-xs text-sm text-white/80">{body}</p>
+      <h2 className="text-3xl font-semibold leading-[1.1] tracking-tight text-ink">{title}</h2>
+      <p className="mt-2.5 max-w-xs text-sm text-ink/75">{body}</p>
       <button
         type="button"
         onClick={onClick}
         tabIndex={visible ? 0 : -1}
-        className="mt-5 h-10 rounded-full border-2 border-white px-7 text-sm font-semibold transition hover:bg-white hover:text-brand focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/30"
+        className="mt-5 h-10 rounded-full border-2 border-brand px-7 text-sm font-semibold text-brand transition hover:bg-brand hover:text-canvas focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/30"
       >
         {cta}
       </button>
@@ -488,25 +483,25 @@ function ContentPanel({ mode, onSwitch }: { mode: Mode; onSwitch: (m: Mode) => v
   return (
     <div
       className={cn(
-        "absolute left-0 top-0 z-20 hidden h-full w-1/2 overflow-hidden bg-linear-to-br from-brand to-brand-dark text-white md:block",
+        "absolute left-0 top-0 z-20 hidden h-full w-1/2 overflow-hidden bg-linear-to-br from-line via-surface to-canvas text-ink md:block",
         "transition-transform duration-[800ms] ease-[cubic-bezier(.7,0,.2,1)]"
       )}
       style={{ transform: mode === "register" ? "translateX(100%)" : "translateX(0%)" }}
     >
-      <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-      <div aria-hidden className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-black/20 blur-3xl" />
+      <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-brand/25 blur-3xl" />
+      <div aria-hidden className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-black/40 blur-3xl" />
       <div
         aria-hidden
-        className="absolute inset-0 opacity-[0.07]"
+        className="absolute inset-0 opacity-[0.08]"
         style={{
-          backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)",
+          backgroundImage: "radial-gradient(circle at 1px 1px, var(--color-brand) 1px, transparent 0)",
           backgroundSize: "24px 24px",
         }}
       />
 
       <div className="relative flex h-full flex-col justify-between p-8">
         <div className="flex items-center gap-2.5 font-semibold">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-white text-brand">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-canvas">
             <CheckIcon />
           </span>
           <span className="text-lg tracking-tight">Validly</span>
@@ -552,11 +547,11 @@ export function AuthCard({ initialMode = "register" }: { initialMode?: Mode }) {
   const isRegister = mode === "register";
 
   return (
-    <main className="relative grid min-h-screen place-items-center overflow-hidden bg-canvas p-4 sm:p-8">
+    <main className="relative grid min-h-screen place-items-center overflow-hidden bg-canvas p-4 text-ink sm:p-8">
       <div aria-hidden className="absolute -left-40 top-0 h-[28rem] w-[28rem] rounded-full bg-brand-tint blur-3xl" />
       <div aria-hidden className="absolute -right-40 bottom-0 h-[28rem] w-[28rem] rounded-full bg-brand-tint blur-3xl" />
 
-      <div className="relative w-full max-w-[920px] overflow-hidden rounded-3xl border border-line bg-surface shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)] md:h-[660px]">
+      <div className="relative w-full max-w-[920px] overflow-hidden rounded-3xl border border-line bg-surface shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] md:h-[660px]">
         {/* Register form: left half */}
         <section
           aria-hidden={!isRegister}
@@ -568,7 +563,7 @@ export function AuthCard({ initialMode = "register" }: { initialMode?: Mode }) {
           )}
         >
           <div className="mx-auto flex min-h-full w-full max-w-[400px] flex-col justify-center">
-            <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-[1.75rem]">Create your account</h1>
+            <h1 className="text-2xl font-semibold leading-tight tracking-tight text-ink sm:text-[1.75rem]">Create your account</h1>
             <p className="mb-6 mt-1.5 text-ink-soft">Takes under a minute. No card needed.</p>
             <RegisterForm onSwitch={() => switchTo("login")} />
           </div>
@@ -585,7 +580,7 @@ export function AuthCard({ initialMode = "register" }: { initialMode?: Mode }) {
           )}
         >
           <div className="mx-auto flex min-h-full w-full max-w-[400px] flex-col justify-center">
-            <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-[1.75rem]">Welcome back</h1>
+            <h1 className="text-2xl font-semibold leading-tight tracking-tight text-ink sm:text-[1.75rem]">Welcome back</h1>
             <p className="mb-6 mt-1.5 text-ink-soft">Log in to pick up where you left off.</p>
             <LoginForm onSwitch={() => switchTo("register")} />
           </div>

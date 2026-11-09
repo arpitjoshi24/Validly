@@ -154,7 +154,7 @@ export function ConsumerProfileForm() {
             </>
           )}
         </p>
-        <Button onClick={save} loading={saving} disabled={loading || !dirty} className="h-10 sm:min-w-36">
+        <Button onClick={save} loading={saving} disabled={loading || !dirty} className="h-10 sm:min-w-36 text-black">
           {!dirty && saved.length > 0 ? "Saved" : "Save interests"}
         </Button>
       </div>
